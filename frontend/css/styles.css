@@ -1,0 +1,53 @@
+:root {
+  --bg: #0b0d12;
+  --panel: #141821;
+  --text: #e6e9ef;
+  --muted: #8b93a4;
+  --cyan: #22d3ee;
+  --red: #f87171;
+  --radius: 10px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--panel);
+}
+
+.topbar h1 { font-size: 1.1rem; margin: 0; letter-spacing: 0.15em; }
+.status { font-size: 0.85rem; color: var(--muted); }
+.status--on { color: var(--cyan); }
+.status--error { color: var(--red); }
+
+button {
+  margin-left: auto;
+  background: var(--cyan);
+  color: #04222a;
+  border: 0;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+main { padding: 1.25rem; }
+
+video {
+  width: 640px;
+  max-width: 100%;
+  border-radius: var(--radius);
+  background: #000;
+  transform: scaleX(-1); /* mirror, so it behaves like a mirror */
+}
+
+#message { color: var(--muted); }

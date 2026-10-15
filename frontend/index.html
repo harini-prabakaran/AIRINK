@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AIRINK</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>AIRINK</h1>
+    <span id="camera-status" class="status status--off">Camera off</span>
+    <button id="camera-toggle" type="button">Start camera</button>
+  </header>
+
+  <main>
+    <video id="preview" autoplay playsinline muted></video>
+    <p id="message" role="status">Click "Start camera". Video stays on this computer.</p>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
