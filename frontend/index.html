@@ -10,14 +10,25 @@
   <header class="topbar">
     <h1>AIRINK</h1>
     <span id="camera-status" class="status status--off">Camera off</span>
+    <span id="ws-status" class="status status--off">Backend: idle</span>
     <button id="camera-toggle" type="button">Start camera</button>
   </header>
 
   <main>
-    <video id="preview" autoplay playsinline muted></video>
+    <div class="stage">
+      <video id="preview" autoplay playsinline muted></video>
+      <canvas id="overlay" width="640" height="480"></canvas>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="overlay-toggle" checked /> Show hand landmarks
+    </label>
     <p id="message" role="status">Click "Start camera". Video stays on this computer.</p>
+    <pre id="readout">(no results yet)</pre>
   </main>
 
+  <script src="js/vision-client.js"></script>
+  <script src="js/diagnostics.js"></script>
+  <script src="js/overlay.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
