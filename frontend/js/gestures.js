@@ -40,10 +40,13 @@ class AirInput {
     this.active = false;     // true only while an AIR stroke is in progress
     this.last = null;
     this.lastRatio = null;
+    this.endReasons = { pinch: 0, handLost: 0, jump: 0 };
+    this.lastReleaseRatio = null;
   }
 
   update(result) {
     if (!result.hand_detected || !result.landmarks || result.landmarks.length !== 21) {
+      if (this.active) this.endReasons.handLost++;
       this.release();
       return;
     }
@@ -60,6 +63,7 @@ class AirInput {
         this.engine.beginStroke(x, y);
         this.active = true;
       } else if (Math.hypot(x - this.last.x, y - this.last.y) > MAX_JUMP) {
+        this.endReasons.jump++;
         this.engine.endStroke();                // discontinuity: never draw across it
         this.engine.beginStroke(x, y);
       } else {
@@ -67,6 +71,8 @@ class AirInput {
       }
       this.last = { x, y };
     } else if (this.active) {
+      this.endReasons.pinch++;
+      this.lastReleaseRatio = this.lastRatio;
       this._endStroke();
     }
     this.cursor.classList.toggle("is-drawing", this.active);

@@ -125,3 +125,5 @@ video {
 }
 .air-cursor.is-visible { display: block; }
 .air-cursor.is-drawing { background: var(--cyan); border-color: var(--cyan); }
+
+#readout { white-space: pre-wrap; }

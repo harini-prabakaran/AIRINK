@@ -1,4 +1,4 @@
-"""WebSocket endpoint: receives JPEG frames, returns hand landmarks.
+"""WebSocket endpoint: receives JPEG frames, returns hand landmarks and a raw gesture.
 
 api/ moves data. All hand logic lives in vision/.
 """
@@ -15,6 +15,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field, ValidationError
 
 from ..config import MAX_FRAME_BYTES, MAX_MESSAGE_CHARS
+from ..vision.pipeline import GesturePipeline
 
 router = APIRouter()
 logger = logging.getLogger("airink.ws")
@@ -56,6 +57,7 @@ async def vision_socket(ws: WebSocket) -> None:
         await ws.close(code=1011)
         return
 
+    pipeline = GesturePipeline()  # per-connection: the pinch detector is stateful
     logger.info("Client connected")
     try:
         while True:
@@ -78,11 +80,16 @@ async def vision_socket(ws: WebSocket) -> None:
                     result = await asyncio.to_thread(
                         tracker.process, rgb, int(time.monotonic() * 1000)
                     )
+                height, width = rgb.shape[:2]
+                out = pipeline.process(
+                    result.landmarks if result.hand_detected else None, (width, height)
+                )
             except ValueError as exc:  # expected, safe to show
                 await ws.send_json(error_reply(str(exc), msg.seq))
                 continue
             except Exception:  # unexpected: log details, hide them from the client
                 logger.exception("Inference failed for seq %d", msg.seq)
+                pipeline.reset()  # never carry gesture state across a failed frame
                 await ws.send_json(error_reply("Internal vision error.", msg.seq))
                 continue
 
@@ -94,6 +101,7 @@ async def vision_socket(ws: WebSocket) -> None:
                 "hand_detected": result.hand_detected,
                 "landmarks": [[round(c, 5) for c in lm] for lm in result.landmarks],
                 "handedness_score": result.handedness_score,
+                **out.to_wire(),
             })
     except WebSocketDisconnect:
         logger.info("Client disconnected")
