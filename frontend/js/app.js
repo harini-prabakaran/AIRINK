@@ -30,6 +30,7 @@ const vision = new VisionClient({
     wsStatusEl.className = `status ${cls}`;
     if (s !== "connected") {       // never leave old landmarks on screen
       overlay.clear();
+      airInput.release();
       lastResult = null;
     }
   },
@@ -48,6 +49,7 @@ function showResult(r) {
   serverMs.add(r.processing_ms);
   lastResult = r;
   overlay.draw(r.hand_detected ? r.landmarks : null); // no hand -> clears
+  airInput.update(r);
   renderReadout();
 }
 
@@ -69,6 +71,7 @@ function renderReadout() {
   } else {
     text += `index tip: -\n`;
   }
+  text += `pinch ratio: ${airInput.lastRatio === null ? "-" : airInput.lastRatio.toFixed(2)} (draws below ${PINCH_THRESHOLD})   air stroke active: ${airInput.active}\n`;
   text += `server processing (mean of last ${serverMs.values.length}): ${fmt(serverMs.mean())} ms\n`;
   text += `capture to result (mean, browser clock, incl. JPEG encode): ${fmt(latency.mean())} ms`;
   readoutEl.textContent = text;
@@ -123,6 +126,7 @@ function stopCamera() {
   vision.disconnect();
 
   overlay.clear();
+  airInput.release();
   lastResult = null;
   fps.reset(); latency.reset(); serverMs.reset();
   setStatus("Camera off", "status--off");

@@ -14,21 +14,56 @@
     <button id="camera-toggle" type="button">Start camera</button>
   </header>
 
-  <main>
-    <div class="stage">
-      <video id="preview" autoplay playsinline muted></video>
-      <canvas id="overlay" width="640" height="480"></canvas>
-    </div>
-    <label class="toggle">
-      <input type="checkbox" id="overlay-toggle" checked /> Show hand landmarks
-    </label>
-    <p id="message" role="status">Click "Start camera". Video stays on this computer.</p>
-    <pre id="readout">(no results yet)</pre>
+  <main class="workspace">
+    <section class="draw-area" aria-label="Drawing canvas">
+      <div class="toolbar">
+        <div class="swatches" role="group" aria-label="Brush colour">
+          <button type="button" class="swatch" data-color="#22d3ee" aria-label="Cyan" aria-pressed="true"></button>
+          <button type="button" class="swatch" data-color="#a78bfa" aria-label="Violet" aria-pressed="false"></button>
+          <button type="button" class="swatch" data-color="#e6e9ef" aria-label="White" aria-pressed="false"></button>
+          <button type="button" class="swatch" data-color="#f472b6" aria-label="Pink" aria-pressed="false"></button>
+          <button type="button" class="swatch" data-color="#4ade80" aria-label="Green" aria-pressed="false"></button>
+          <button type="button" class="swatch" data-color="#fbbf24" aria-label="Amber" aria-pressed="false"></button>
+        </div>
+        <label class="size-control">
+          Brush
+          <input type="range" id="brush-size" min="2" max="40" value="6" />
+          <span id="brush-size-label">6 px</span>
+        </label>
+        <div class="actions" role="group" aria-label="Canvas actions">
+          <button type="button" id="undo-btn" title="Undo (Cmd/Ctrl+Z)">Undo</button>
+          <button type="button" id="redo-btn" title="Redo (Shift+Cmd/Ctrl+Z)">Redo</button>
+          <button type="button" id="clear-btn">Clear</button>
+          <button type="button" id="export-btn">Export PNG</button>
+        </div>
+        <span id="stroke-count" class="status">Strokes: 0</span>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="draw-canvas"></canvas>
+        <canvas id="draw-live"></canvas>
+        <div id="air-cursor" class="air-cursor" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="stage">
+        <video id="preview" autoplay playsinline muted></video>
+        <canvas id="overlay" width="640" height="480"></canvas>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="overlay-toggle" checked /> Show hand landmarks
+      </label>
+      <p id="message" role="status">Click "Start camera". Video stays on this computer.</p>
+      <pre id="readout">(no results yet)</pre>
+    </aside>
   </main>
 
   <script src="js/vision-client.js"></script>
   <script src="js/diagnostics.js"></script>
   <script src="js/overlay.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/gestures.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/ui.js"></script>
 </body>
 </html>
